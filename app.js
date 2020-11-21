@@ -9,10 +9,129 @@ const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
+const { run } = require("jest");
+
 
 
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
+
+const employeesArr = [];
+
+const managerQuestions = [
+    {
+        type: 'input',
+        name: 'officeNumber',
+        message: `What is the manager's office number?`
+    },
+    {
+        type: 'input',
+        name: 'managerName',
+        message: `What is the manager's name?`,
+    },
+    {
+        type: 'input',
+        name: 'managerEmail',
+        message: `What is the manager's email address?`,
+    },
+    {
+        type: 'input',
+        name: 'managerID',
+        message: `What is the manager's ID number?`
+    },
+
+];
+const firstQuestion = [
+    {
+        type: 'list',
+        name: 'employeeRole',
+        message: 'What type of employee would you like to add?',
+        choices: ['engineer', 'intern'],
+    },
+];
+
+const engineerQuestions = [
+    {
+        type: 'input',
+        name: 'githubUsername',
+        message: `What is the engineer's github username?`
+    }
+];
+
+const internQuestions = [
+    {
+        type: 'input',
+        name: 'internSchool',
+        message: `Where did the intern attend school?`
+    }
+];
+
+const employeeQuestions = [
+    {
+        type: 'input',
+        name: 'employeeName',
+        message: `What is the employee's name?`,
+    },
+    {
+        type: 'input',
+        name: 'employeeEmail',
+        message: `What is the employee's email address?`,
+    },
+    {
+        type: 'input',
+        name: 'employeeId',
+        message: `What is the employee's ID number?`
+    },
+];
+
+const finalQuestion = [
+    {
+        type: 'list',
+        name: 'response',
+        message: 'Add another employee?',
+        choices: ['yes', 'no'],
+    }
+];
+
+function buildManager() {
+    inquirer
+        .prompt(managerQuestions)
+        .then(answers => {
+            employeesArr.push(new Manager(answers.managerName, answers.managerID, answers.managerEmail, answers.officeNumber))
+            // console.log(answers)
+            empRole()
+        })
+};
+
+function empRole() {
+    inquirer
+    .prompt(firstQuestion)
+    .then(answers => {
+       if(answers.employeeRole==='engineer'){
+        inquirer
+        .prompt([...engineerQuestions,...employeeQuestions])
+        .then(answers => {
+            employeesArr.push(new Engineer(answers.employeeName, answers.employeeID, answers.employeeEmail, answers.githubUsername))
+            // console.log(answers)
+            lastQuestion()
+        }) 
+       }else { 
+           inquirer
+        .prompt([...internQuestions,...employeeQuestions])
+        .then(answers => {
+            employeesArr.push(new Intern(answers.employeeName, answers.employeeID, answers.employeeEmail, answers.internSchool))
+            // console.log(answers)
+            lastQuestion()
+        })
+
+       }
+    })
+};
+
+function lastQuestion() {
+
+};
+buildManager()
 
 // After the user has input all employees desired, call the `render` function (required
 // above) and pass in an array containing all employee objects; the `render` function will
